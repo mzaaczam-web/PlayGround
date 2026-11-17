@@ -34,7 +34,7 @@
     </section>
 
     <div id="toast" class="toast hidden"></div>
-    <div id="interact-hint" class="interact-hint hidden"><kbd>E</kbd><span>Interactuar</span></div>
+    <button id="interact-hint" class="interact-hint hidden" type="button" aria-label="Interactuar con el objeto cercano"><kbd>E / ENTER</kbd><span>Interactuar</span></button>
     <div id="crosshair" class="crosshair hidden"><i></i></div>
     <div id="damage-flash"></div>
 
@@ -47,7 +47,7 @@
         <div class="intro-meta"><span>✦ UNA HISTORIA SOBRE LO QUE DEJAMOS ATRÁS</span><span>05 CAPÍTULOS · 10 MIN</span></div>
       </div>
       <div class="intro-side"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="sun-core"></div><span class="side-caption">TODO LO QUE<br />AMAMOS, EN UN<br />SOLO UNIVERSO.</span></div>
-      <div class="controls-note"><span>W A S D</span> MOVER <span class="key-sep">·</span><span>ESPACIO</span> SALTAR <span class="key-sep">·</span><span>CLIC / F</span> LANZAR LUZ</div>
+      <div class="controls-note"><span>W A S D</span> MOVER <span class="key-sep">·</span><span>E / ENTER</span> INTERACTUAR <span class="key-sep">·</span><span>ESPACIO</span> SALTAR <span class="key-sep">·</span><span>CLIC / F</span> LANZAR LUZ</div>
     </section>
 
     <section id="story-screen" class="screen story-screen hidden">
@@ -58,7 +58,7 @@
       <div class="ending-content"><div class="ending-sigil">∞</div><div class="kicker"><span></span> FIN · Y PRINCIPIO</div><h2>El amor también<br /><em>es un universo.</em></h2><p id="ending-copy">En algún lugar, una niña mira las estrellas y siente que alguien la cuida.</p><div class="ending-stats"><span><b id="final-hits">0</b> FISURAS CERRADAS</span><span><b id="final-time">00:00</b> TIEMPO EN LA HISTORIA</span></div><button id="restart-button" class="primary-button">Volver a vivir la historia <span>↻</span></button></div>
     </section>
 
-    <div id="mobile-controls" class="mobile-controls hidden"><div id="move-pad" class="move-pad"><span>✥</span></div><button id="mobile-jump" class="mobile-action">↑</button><button id="mobile-fire" class="mobile-action fire-action">✦</button></div>
+    <div id="mobile-controls" class="mobile-controls hidden"><div id="move-pad" class="move-pad" aria-label="Mover"><span>✥</span></div><button id="mobile-jump" class="mobile-action" type="button" aria-label="Saltar">↑</button><button id="mobile-fire" class="mobile-action fire-action" type="button" aria-label="Lanzar luz">✦</button><button id="mobile-interact" class="mobile-action interact-action" type="button" aria-label="Interactuar">E</button></div>
     <div id="chapter-banner" class="chapter-banner hidden"></div>
     <div id="pause-overlay" class="pause-overlay hidden"><span>PAUSA</span><button id="resume-button" class="primary-button">Continuar <span>↗</span></button></div>
     <footer id="game-footer" class="game-footer"><span>EL ÚLTIMO HORIZONTE</span><span>HECHO DE LUZ · <b>HECHO DE AMOR</b></span></footer>
