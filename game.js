@@ -223,19 +223,21 @@ function hitTarget(target){
   }
   if(state.stage===1&&state.collectibles.every(c=>c.taken))completeStage();
   if((state.stage===2||state.stage===3)&&state.enemies.every(e=>e.dead))completeStage();
-  if(state.stage===4&&state.anchors.every(a=>a.dead)&&state.enemies.length&&state.enemies.every(e=>e.dead)){state.interact=addMarker(new THREE.Vector3(0,0,-18),'#fff0ad','Cierra la grieta');$('objective-text').textContent='Entra en el corazón de la grieta';showToast('El núcleo está expuesto. Acércate y pulsa E.');}
+  if(state.stage===4&&state.anchors.every(a=>a.dead)&&state.enemies.length&&state.enemies.every(e=>e.dead)){state.interact=addMarker(new THREE.Vector3(0,0,-18),'#fff0ad','Cierra la grieta');$('objective-text').textContent='Entra en el corazón de la grieta';showToast('El núcleo está expuesto. Acércate y pulsa E o ENTER.');}
 }
 function interact(){
-  if(!state.running||!state.interact)return;
-  if(state.player.position.distanceTo(state.interact.group.position)<3.15){state.interact=null;completeStage();}
-  else showToast('Acércate un poco más a la señal.');
+  if(!state.running||state.paused||!state.interact)return;
+  if(state.player.position.distanceTo(state.interact.group.position)<5.2){state.interact=null;completeStage();}
+  else showToast('Sigue la señal luminosa y acércate para interactuar.');
 }
+$('interact-hint').addEventListener('click',interact);
+$('mobile-interact').addEventListener('pointerdown',e=>{e.preventDefault();interact();});
 function togglePause(){if(!state.running)return;state.paused=!state.paused;$('pause-overlay').classList.toggle('hidden',!state.paused);}
 function doJump(){if(state.running&&!state.paused&&state.player.position.y<=.03)state.player.userData.vy=7.1;}
 function onKeyDown(e){
   if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();
   const key=e.key.toLowerCase();state.keys.add(key);
-  if(key==='e')interact();if(key==='f'||key===' ')state.fireHeld=true;if(key===' '&&state.running)doJump();
+  if(key==='e'||key==='enter')interact();if(key==='f'||key===' ')state.fireHeld=true;if(key===' '&&state.running)doJump();
   if(key==='escape'||key==='p')togglePause();
 }
 function onKeyUp(e){state.keys.delete(e.key.toLowerCase());if(e.key===' '||e.key.toLowerCase()==='f')state.fireHeld=false;}
@@ -262,7 +264,10 @@ function update(dt){
   if(state.playerParts.aura){state.playerParts.aura.material=state.stage>0?mats.cyan:state.playerParts.aura.material;state.playerParts.aura.visible=state.stage>0;state.playerParts.footGlow.visible=state.stage>0;}
   const heading=state.player.rotation.y;const desired=new THREE.Vector3(state.player.position.x-Math.sin(heading)*8,state.player.position.y+5.2,state.player.position.z+Math.cos(heading)*8);
   camera.position.lerp(desired,1-Math.exp(-4.5*dt));camera.lookAt(state.player.position.x,state.player.position.y+1.15,state.player.position.z);
-  const near=state.interact&&state.player.position.distanceTo(state.interact.group.position)<3.4;$('interact-hint').classList.toggle('hidden',!near);
+  const near=!!(state.interact&&state.player.position.distanceTo(state.interact.group.position)<5.2);
+  $('interact-hint').classList.toggle('hidden',!near);
+  $('mobile-interact').classList.toggle('interact-ready',near);
+  $('mobile-interact').setAttribute('aria-label',near?`Interactuar: ${state.interact?.action||'objeto cercano'}`:'Acércate a la señal para interactuar');
   state.decor.forEach(o=>{if(!o||!o.parent)return;if(o.userData.float)o.position.y=Math.sin(clock.elapsedTime*2.2)*.12;if(o.userData.spin)o.rotation.y+=dt*1.25;});
   for(const item of state.collectibles){if(item.taken)continue;item.group.children[0].rotation.y+=dt*1.7;if(state.player.position.distanceTo(item.group.position)<1.8){item.taken=true;dynamicWorld.remove(item.group);const remaining=state.collectibles.filter(c=>!c.taken).length;$('objective-text').textContent=remaining?`Reúne los ${remaining} fragmentos restantes`:'Poder despertado';showToast(`Fragmento de luz ${item.index+1} / 3`);if(!remaining)completeStage();}}
   for(const enemy of state.enemies){if(enemy.dead)continue;enemy.phase+=dt;enemy.group.position.y=Math.sin(enemy.phase*2)*.14;
@@ -271,7 +276,7 @@ function update(dt){
   }
   for(let i=state.projectiles.length-1;i>=0;i--){const p=state.projectiles[i];if(!p.target||p.target.dead){dynamicWorld.remove(p.mesh);state.projectiles.splice(i,1);continue;}const aim=p.target.group.position.clone().add(new THREE.Vector3(0,p.target.boss?2.2:1.15,0));const delta=aim.sub(p.mesh.position);const distance=delta.length();if(distance<p.speed*dt+.45){hitTarget(p.target);dynamicWorld.remove(p.mesh);state.projectiles.splice(i,1);}else{p.mesh.position.addScaledVector(delta.normalize(),p.speed*dt);}}
   if(state.fireHeld)fire();
-  if(state.stage===0&&state.interact&&state.player.position.distanceTo(state.interact.group.position)<3.3)$('objective-text').textContent='Pulsa E para entrar';
+  if(state.stage===0&&state.interact&&state.player.position.distanceTo(state.interact.group.position)<5.2)$('objective-text').textContent='Pulsa E / ENTER para entrar';
 }
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.035);update(dt);renderer.render(scene,camera);}
 animate();
